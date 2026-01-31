@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jaden Portfolio</title>
+</head>
+
+<body>
+
+  <!-- This message is updated using JavaScript -->
+  <h1 id="welcomeMsg">Welcome!</h1>
+
+  <!-- Navigation menu -->
+  <nav>
+    <a href="#about">About</a> |
+    <a href="#projects">Projects</a> |
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <hr>
+
+  <!-- About section -->
+  <section id="about">
+    <h2>About</h2>
+    <p>
+      My name is Jaden and I am a student studying information technology and web development.
+      I am learning how to build websites using HTML, CSS, JavaScript, Python, and SQL.
+      This portfolio page will continue to grow as I complete more projects.
+    </p>
+  </section>
+
+  <hr>
+
+  <!-- Projects section -->
+  <section id="projects">
+    <h2>Projects</h2>
+    <p>Click the images below to view my GitHub projects.</p>
+
+    <a href="https://github.com/Jaden-Cov/PythonCourse" target="_blank">
+      <img src="https://via.placeholder.com/250x150" alt="Python Course Project" width="250">
+    </a>
+
+    <a href="https://github.com/Jaden-Cov/sqlcourse" target="_blank">
+      <img src="https://via.placeholder.com/250x150" alt="SQL Course Project" width="250">
+    </a>
+
+    <a href="https://github.com/Jaden-Cov/Jaden-Cov.github.io" target="_blank">
+      <img src="https://via.placeholder.com/250x150" alt="GitHub Pages Portfolio" width="250">
+    </a>
+  </section>
+
+  <hr>
+
+  <!-- Contact section -->
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Use the form below to send a message.</p>
+
+    <form>
+      <label for="senderName">Sender Name:</label><br>
+      <input type="text" id="senderName" name="senderName"><br><br>
+
+      <label for="emailAddress">Email Address:</label><br>
+      <input type="email" id="emailAddress" name="emailAddress"><br><br>
+
+      <label for="subject">Subject:</label><br>
+      <input type="text" id="subject" name="subject"><br><br>
+
+      <label for="message">Message:</label><br>
+      <textarea id="message" name="message" rows="5" cols="40"></textarea><br><br>
+
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+
+  <!-- JavaScript for personalized welcome message -->
+  <script>
+    // Prompt the user for their name and display a welcome message
+    let userName = prompt("What is your name?");
+
+    if (userName === null || userName.trim() === "") {
+      document.getElementById("welcomeMsg").textContent = "Welcome!";
+    } else {
+      document.getElementById("welcomeMsg").textContent = "Welcome, " + userName + "!";
+    }
+  </script>
+
+</body>
+</html>
