@@ -168,87 +168,139 @@
 
       <button type="submit" id="submitBtn">Submit</button>
     </form>
+    <!-- Status messages  -->
+    <p id="formStatus"></p>
   </section>
 
   <script>
-    // Prompt the user for their name and display a welcome message
-    let userName = prompt("What is your name?");
+  // Prompt the user for their name and display a welcome message
+  let userName = prompt("What is your name?");
 
-    if (userName === null || userName.trim() === "") {
-      document.getElementById("welcomeMsg").textContent = "Welcome!";
-    } else {
-      document.getElementById("welcomeMsg").textContent = "Welcome, " + userName + "!";
+  if (userName === null || userName.trim() === "") {
+    document.getElementById("welcomeMsg").textContent = "Welcome!";
+  } else {
+    document.getElementById("welcomeMsg").textContent = "Welcome, " + userName + "!";
+  }
+
+  // ---------------------------------------------------------
+  // Requirement 1: Dynamically add a new message after a delay
+  // ---------------------------------------------------------
+  // Adds a notification at the top of the page after 2 seconds
+  setTimeout(function () {
+    const notice = document.createElement("p");
+    notice.textContent = "✅ New update: Check out my latest projects below!";
+    notice.style.padding = "10px";
+    notice.style.border = "2px solid #333";
+    notice.style.borderRadius = "6px";
+    notice.style.backgroundColor = "#fff7cc";
+
+    // Insert the message near the top of the page (after the dark mode toggle)
+    document.body.insertBefore(notice, document.body.children[1]);
+  }, 2000);
+
+  // ---------------------------------------------------------
+  // Requirement 2: Select and modify at least two elements
+  // ---------------------------------------------------------
+
+  // 1) Change a heading using getElementById
+  const aboutHeading = document.querySelector("#about h2");
+  aboutHeading.textContent = "About Me";
+
+  // 2) Style the Projects section using querySelector
+  const projectsSection = document.querySelector("#projects");
+  projectsSection.style.border = "2px solid #333";
+  projectsSection.style.padding = "12px";
+  projectsSection.style.borderRadius = "6px";
+
+  // -----------------------------
+  // Loop: Display skills in About
+  // -----------------------------
+  const skills = ["HTML", "CSS", "JavaScript", "Git", "GitHub"];
+  const skillsList = document.getElementById("skillsList");
+
+  skills.forEach(skill => {
+    const li = document.createElement("li");
+    li.textContent = skill;
+    skillsList.appendChild(li);
+  });
+
+  // ---------------------------------------------------------
+  // (Extra) Requirement 1 option: Dynamically add a project paragraph
+  // ---------------------------------------------------------
+  const projectsPara = document.createElement("p");
+  projectsPara.textContent =
+    "Recent Project: I built interactive pages using JavaScript, including dark mode, form validation, and DOM updates.";
+  projectsSection.appendChild(projectsPara);
+
+  // ---------------------------------------
+  // if...else: Featured Content visibility
+  // ---------------------------------------
+  const projectLinks = document.querySelectorAll("#projects a");
+  const projectCount = projectLinks.length;
+
+  const uniDiv = document.getElementById("universityResources");
+  const personalDiv = document.getElementById("personalProjects");
+
+  function setVisible(div) {
+    div.classList.add("visible-box");
+    div.classList.remove("hidden-box");
+  }
+
+  function setHidden(div) {
+    div.classList.add("hidden-box");
+    div.classList.remove("visible-box");
+  }
+
+  // If fewer than 3 projects, show BOTH divs.
+  // Otherwise show ONLY Personal Projects.
+  if (projectCount < 3) {
+    setVisible(uniDiv);
+    setVisible(personalDiv);
+  } else {
+    setHidden(uniDiv);
+    setVisible(personalDiv);
+  }
+
+  // -----------------------------
+  // Dark Mode toggle
+  // -----------------------------
+  const darkModeToggle = document.getElementById("darkModeToggle");
+
+  darkModeToggle.addEventListener("change", function () {
+    document.body.classList.toggle("dark-mode");
+  });
+
+  // ---------------------------------------------------------
+  // Requirement 3: Timed confirmation for form submission
+  // ---------------------------------------------------------
+  const contactForm = document.getElementById("contactForm");
+  const formStatus = document.getElementById("formStatus");
+
+  contactForm.addEventListener("submit", function (event) {
+    event.preventDefault(); // required
+
+    const sender = document.getElementById("senderName").value.trim();
+
+    // Basic validation
+    if (sender === "") {
+      alert("Please enter your name before submitting.");
+      return;
     }
 
-    // -----------------------------
-    // Loop: Display skills in About
-    // -----------------------------
-    const skills = ["HTML", "CSS", "JavaScript", "Git", "GitHub"];
-    const skillsList = document.getElementById("skillsList");
+    // Create/loading message dynamically
+    formStatus.textContent = "Sending message...";
+    formStatus.style.fontFamily = "Arial, sans-serif";
+    formStatus.style.fontWeight = "bold";
+    formStatus.style.marginTop = "10px";
 
-    skills.forEach(skill => {
-      const li = document.createElement("li");
-      li.textContent = skill;
-      skillsList.appendChild(li);
-    });
+    // Delay confirmation by 2–3 seconds
+    setTimeout(function () {
+      formStatus.textContent = "Message sent successfully! ✅";
 
-    // ---------------------------------------
-    // if...else: Featured Content visibility
-    // ---------------------------------------
-    const projectLinks = document.querySelectorAll("#projects a");
-    const projectCount = projectLinks.length;
-
-    const uniDiv = document.getElementById("universityResources");
-    const personalDiv = document.getElementById("personalProjects");
-
-    // Style helper: mark what is visible
-    function setVisible(div) {
-      div.classList.add("visible-box");
-      div.classList.remove("hidden-box");
-    }
-
-    function setHidden(div) {
-      div.classList.add("hidden-box");
-      div.classList.remove("visible-box");
-    }
-
-    // If fewer than 3 projects, show BOTH divs.
-    // Otherwise show ONLY Personal Projects.
-    if (projectCount < 3) {
-      setVisible(uniDiv);
-      setVisible(personalDiv);
-    } else {
-      setHidden(uniDiv);
-      setVisible(personalDiv);
-    }
-
-    // -----------------------------
-    // Dark Mode toggle
-    // -----------------------------
-    const darkModeToggle = document.getElementById("darkModeToggle");
-
-    darkModeToggle.addEventListener("change", function () {
-      document.body.classList.toggle("dark-mode");
-    });
-
-    // ---------------------------------------
-    // Form interactivity: Submit button click
-    // ---------------------------------------
-    const submitBtn = document.getElementById("submitBtn");
-
-    submitBtn.addEventListener("click", function (event) {
-      event.preventDefault(); // Prevent page refresh
-
-      const sender = document.getElementById("senderName").value.trim();
-
-      if (sender === "") {
-        alert("Please enter your name before submitting.");
-      } else {
-        alert("Thank you, " + sender + ", your message has been sent!");
-      }
-    });
-  </script>
-
+      // Optional: clear the form after sending
+      contactForm.reset();
+    }, 2500);
+  });
+</script>
 </body>
 </html>
-
