@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Jaden Portfolio</title>
 
   <style>
@@ -16,7 +17,7 @@
       margin-right: 8px;
     }
 
-    /* Dark mode styles */
+    /* dark mode */
     .dark-mode {
       background-color: #111;
       color: #f2f2f2;
@@ -26,7 +27,7 @@
       color: #9ecbff;
     }
 
-    /* Featured Content boxes */
+    /* featured boxes */
     .featured-box {
       padding: 12px;
       margin: 12px 0;
@@ -53,10 +54,88 @@
       gap: 8px;
       margin-bottom: 10px;
     }
+
+    /* modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-box {
+      width: min(420px, 92%);
+      background: #fff;
+      color: #111;
+      border: 2px solid #333;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    }
+
+    .dark-mode .modal-box {
+      background: #1f2a33;
+      color: #f2f2f2;
+      border-color: #9ecbff;
+    }
+
+    .modal-box button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    /* tooltip */
+    .tooltip-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip-text {
+      position: absolute;
+      bottom: 130%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .tooltip-wrap:hover .tooltip-text {
+      opacity: 1;
+    }
   </style>
 </head>
 
 <body>
+
+  <!--
+    Author: Jaden (update if needed)
+    Date: 02/17/2026
+    Purpose: This is my portfolio webpage for Web Interface class. It shows basic HTML layout,
+    some JavaScript features like dark mode, DOM updates, and a contact form message.
+  -->
+
+  <!-- Modal shown on page load -->
+  <div id="modalOverlay" class="modal-overlay">
+    <div class="modal-box">
+      <h2>Notice</h2>
+      <p>This page is a work in progress.</p>
+      <button id="closeModalBtn" type="button">Close</button>
+    </div>
+  </div>
 
   <!-- Dark Mode Toggle -->
   <div class="toggle-area">
@@ -64,10 +143,8 @@
     <input type="checkbox" id="darkModeToggle">
   </div>
 
-  <!-- This message is updated using JavaScript -->
   <h1 id="welcomeMsg">Welcome!</h1>
 
-  <!-- Navigation menu -->
   <nav>
     <a href="#about">About</a> |
     <a href="#featured">Featured Content</a> |
@@ -77,7 +154,6 @@
 
   <hr>
 
-  <!-- About section -->
   <section id="about">
     <h2>About</h2>
     <p>
@@ -86,18 +162,15 @@
       This portfolio page will continue to grow as I complete more projects.
     </p>
 
-    <!-- Skills list will be generated here using a loop -->
     <h3>Skills / Technologies</h3>
     <ul id="skillsList"></ul>
   </section>
 
   <hr>
 
-  <!-- Featured Content section (NEW) -->
   <section id="featured">
     <h2>Featured Content</h2>
 
-    <!-- University Resources -->
     <div id="universityResources" class="featured-box">
       <h3>University Resources</h3>
       <p>
@@ -106,10 +179,8 @@
       </p>
     </div>
 
-    <!-- Personal Projects -->
     <div id="personalProjects" class="featured-box">
       <h3>Personal Projects</h3>
-
       <p>Click an image to view a project:</p>
 
       <a href="https://github.com/Jaden-Cov/PythonCourse" target="_blank">
@@ -128,7 +199,6 @@
 
   <hr>
 
-  <!-- Projects section -->
   <section id="projects">
     <h2>Projects</h2>
     <p>Click the images below to view my GitHub projects.</p>
@@ -148,7 +218,6 @@
 
   <hr>
 
-  <!-- Contact section -->
   <section id="contact">
     <h2>Contact</h2>
     <p>Use the form below to send a message.</p>
@@ -166,141 +235,131 @@
       <label for="message">Message:</label><br>
       <textarea id="message" name="message" rows="5" cols="40"></textarea><br><br>
 
-      <button type="submit" id="submitBtn">Submit</button>
+      <span class="tooltip-wrap">
+        <button type="submit" id="submitBtn">Submit</button>
+        <span class="tooltip-text">Click to send your message!</span>
+      </span>
     </form>
-    <!-- Status messages  -->
+
     <p id="formStatus"></p>
   </section>
 
   <script>
-  // Prompt the user for their name and display a welcome message
-  let userName = prompt("What is your name?");
+    // welcome modal
+    const modalOverlay = document.getElementById("modalOverlay");
+    const closeModalBtn = document.getElementById("closeModalBtn");
 
-  if (userName === null || userName.trim() === "") {
-    document.getElementById("welcomeMsg").textContent = "Welcome!";
-  } else {
-    document.getElementById("welcomeMsg").textContent = "Welcome, " + userName + "!";
-  }
+    closeModalBtn.addEventListener("click", function () {
+      modalOverlay.style.display = "none";
+    });
 
-  // ---------------------------------------------------------
-  // Requirement 1: Dynamically add a new message after a delay
-  // ---------------------------------------------------------
-  // Adds a notification at the top of the page after 2 seconds
-  setTimeout(function () {
-    const notice = document.createElement("p");
-    notice.textContent = "✅ New update: Check out my latest projects below!";
-    notice.style.padding = "10px";
-    notice.style.border = "2px solid #333";
-    notice.style.borderRadius = "6px";
-    notice.style.backgroundColor = "#fff7cc";
+    // change About heading text (simple DOM update)
+    const aboutHeading = document.querySelector("#about h2");
+    aboutHeading.textContent = "About Me";
 
-    // Insert the message near the top of the page (after the dark mode toggle)
-    document.body.insertBefore(notice, document.body.children[1]);
-  }, 2000);
+    // style projects section a little
+    const projectsSection = document.querySelector("#projects");
+    projectsSection.style.border = "2px solid #333";
+    projectsSection.style.padding = "12px";
+    projectsSection.style.borderRadius = "6px";
 
-  // ---------------------------------------------------------
-  // Requirement 2: Select and modify at least two elements
-  // ---------------------------------------------------------
+    // add skills list
+    const skills = ["HTML", "CSS", "JavaScript", "Git", "GitHub"];
+    const skillsList = document.getElementById("skillsList");
 
-  // 1) Change a heading using getElementById
-  const aboutHeading = document.querySelector("#about h2");
-  aboutHeading.textContent = "About Me";
-
-  // 2) Style the Projects section using querySelector
-  const projectsSection = document.querySelector("#projects");
-  projectsSection.style.border = "2px solid #333";
-  projectsSection.style.padding = "12px";
-  projectsSection.style.borderRadius = "6px";
-
-  // -----------------------------
-  // Loop: Display skills in About
-  // -----------------------------
-  const skills = ["HTML", "CSS", "JavaScript", "Git", "GitHub"];
-  const skillsList = document.getElementById("skillsList");
-
-  skills.forEach(skill => {
-    const li = document.createElement("li");
-    li.textContent = skill;
-    skillsList.appendChild(li);
-  });
-
-  // ---------------------------------------------------------
-  // (Extra) Requirement 1 option: Dynamically add a project paragraph
-  // ---------------------------------------------------------
-  const projectsPara = document.createElement("p");
-  projectsPara.textContent =
-    "Recent Project: I built interactive pages using JavaScript, including dark mode, form validation, and DOM updates.";
-  projectsSection.appendChild(projectsPara);
-
-  // ---------------------------------------
-  // if...else: Featured Content visibility
-  // ---------------------------------------
-  const projectLinks = document.querySelectorAll("#projects a");
-  const projectCount = projectLinks.length;
-
-  const uniDiv = document.getElementById("universityResources");
-  const personalDiv = document.getElementById("personalProjects");
-
-  function setVisible(div) {
-    div.classList.add("visible-box");
-    div.classList.remove("hidden-box");
-  }
-
-  function setHidden(div) {
-    div.classList.add("hidden-box");
-    div.classList.remove("visible-box");
-  }
-
-  // If fewer than 3 projects, show BOTH divs.
-  // Otherwise show ONLY Personal Projects.
-  if (projectCount < 3) {
-    setVisible(uniDiv);
-    setVisible(personalDiv);
-  } else {
-    setHidden(uniDiv);
-    setVisible(personalDiv);
-  }
-
-  // -----------------------------
-  // Dark Mode toggle
-  // -----------------------------
-  const darkModeToggle = document.getElementById("darkModeToggle");
-
-  darkModeToggle.addEventListener("change", function () {
-    document.body.classList.toggle("dark-mode");
-  });
-
-  // ---------------------------------------------------------
-  // Requirement 3: Timed confirmation for form submission
-  // ---------------------------------------------------------
-  const contactForm = document.getElementById("contactForm");
-  const formStatus = document.getElementById("formStatus");
-
-  contactForm.addEventListener("submit", function (event) {
-    event.preventDefault(); // required
-
-    const sender = document.getElementById("senderName").value.trim();
-
-    // Basic validation
-    if (sender === "") {
-      alert("Please enter your name before submitting.");
-      return;
+    for (let i = 0; i < skills.length; i++) {
+      const li = document.createElement("li");
+      li.textContent = skills[i];
+      skillsList.appendChild(li);
     }
 
-    // Create/loading message dynamically
-    formStatus.textContent = "Sending message...";
-    formStatus.style.fontFamily = "Arial, sans-serif";
-    formStatus.style.fontWeight = "bold";
-    formStatus.style.marginTop = "10px";
-
-    // Delay confirmation by 2–3 seconds
+    // show a small notice after a delay (kept but made plain)
     setTimeout(function () {
-      formStatus.textContent = "Message sent successfully! ✅";
+      const notice = document.createElement("p");
+      notice.textContent = "New update: Check out my latest projects below!";
+      notice.style.padding = "10px";
+      notice.style.border = "2px solid #333";
+      notice.style.borderRadius = "6px";
+      notice.style.backgroundColor = "#fff7cc";
+      document.body.insertBefore(notice, document.body.children[3]);
+    }, 2000);
 
-      // Optional: clear the form after sending
-      contactForm.reset();
-    }, 2500);
-  });
-</script>
+    // featured content visibility (same idea, simpler)
+    const projectLinks = document.querySelectorAll("#projects a");
+    const projectCount = projectLinks.length;
+
+    const uniDiv = document.getElementById("universityResources");
+    const personalDiv = document.getElementById("personalProjects");
+
+    function showDiv(div) {
+      div.classList.add("visible-box");
+      div.classList.remove("hidden-box");
+    }
+
+    function hideDiv(div) {
+      div.classList.add("hidden-box");
+      div.classList.remove("visible-box");
+    }
+
+    if (projectCount < 3) {
+      showDiv(uniDiv);
+      showDiv(personalDiv);
+    } else {
+      hideDiv(uniDiv);
+      showDiv(personalDiv);
+    }
+
+    // dark mode preference
+    const darkModeToggle = document.getElementById("darkModeToggle");
+
+    function applySavedDarkMode() {
+      const saved = localStorage.getItem("darkMode");
+      if (saved === "enabled") {
+        document.body.classList.add("dark-mode");
+        darkModeToggle.checked = true;
+      } else {
+        document.body.classList.remove("dark-mode");
+        darkModeToggle.checked = false;
+      }
+    }
+
+    applySavedDarkMode();
+
+    darkModeToggle.addEventListener("change", function () {
+      document.body.classList.toggle("dark-mode");
+
+      if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("darkMode", "enabled");
+      } else {
+        localStorage.setItem("darkMode", "disabled");
+      }
+    });
+
+    // contact form submit message
+    const contactForm = document.getElementById("contactForm");
+    const formStatus = document.getElementById("formStatus");
+
+    contactForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const sender = document.getElementById("senderName").value.trim();
+
+      if (sender === "") {
+        alert("Please enter your name before submitting.");
+        return;
+      }
+
+      formStatus.textContent = "Sending message...";
+      formStatus.style.fontFamily = "Arial, sans-serif";
+      formStatus.style.fontWeight = "bold";
+      formStatus.style.marginTop = "10px";
+
+      setTimeout(function () {
+        formStatus.textContent = "Message sent successfully!";
+        contactForm.reset();
+      }, 2500);
+    });
+  </script>
+
 </body>
 </html>
