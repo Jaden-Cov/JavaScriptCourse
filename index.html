@@ -199,22 +199,13 @@
 
   <hr>
 
-  <section id="projects">
-    <h2>Projects</h2>
-    <p>Click the images below to view my GitHub projects.</p>
+<section id="projects">
+  <h2>Projects</h2>
+  <p>These projects are loaded from JavaScript objects and rendered automatically.</p>
 
-    <a href="https://github.com/Jaden-Cov/PythonCourse" target="_blank">
-      <img src="https://via.placeholder.com/250x150" alt="Python Course Project" width="250">
-    </a>
-
-    <a href="https://github.com/Jaden-Cov/sqlcourse" target="_blank">
-      <img src="https://via.placeholder.com/250x150" alt="SQL Course Project" width="250">
-    </a>
-
-    <a href="https://github.com/Jaden-Cov/Jaden-Cov.github.io" target="_blank">
-      <img src="https://via.placeholder.com/250x150" alt="GitHub Pages Portfolio" width="250">
-    </a>
-  </section>
+  <!-- JS will dynamically build the project cards inside here -->
+  <div id="projectsContainer"></div>
+</section>
 
   <hr>
 
@@ -244,122 +235,221 @@
     <p id="formStatus"></p>
   </section>
 
-  <script>
-    // welcome modal
-    const modalOverlay = document.getElementById("modalOverlay");
-    const closeModalBtn = document.getElementById("closeModalBtn");
+<script>
+"use strict";
+document.addEventListener("DOMContentLoaded", function () {
+/* ---------------- Modal ---------------- */
+const modalOverlay = document.getElementById("modalOverlay");
+const closeModalBtn = document.getElementById("closeModalBtn");
 
-    closeModalBtn.addEventListener("click", function () {
-      modalOverlay.style.display = "none";
-    });
+closeModalBtn.addEventListener("click", function () {
+  modalOverlay.style.display = "none";
+});
 
-    // change About heading text (simple DOM update)
-    const aboutHeading = document.querySelector("#about h2");
-    aboutHeading.textContent = "About Me";
+/* ---------------- Simple DOM update ---------------- */
+const aboutHeading = document.querySelector("#about h2");
+aboutHeading.textContent = "About Me";
 
-    // style projects section a little
-    const projectsSection = document.querySelector("#projects");
-    projectsSection.style.border = "2px solid #333";
-    projectsSection.style.padding = "12px";
-    projectsSection.style.borderRadius = "6px";
+const projectsSection = document.querySelector("#projects");
+projectsSection.style.border = "2px solid #333";
+projectsSection.style.padding = "12px";
+projectsSection.style.borderRadius = "6px";
 
-    // add skills list
-    const skills = ["HTML", "CSS", "JavaScript", "Git", "GitHub"];
-    const skillsList = document.getElementById("skillsList");
+/* ---------------- Skills list ---------------- */
+const skills = ["HTML", "CSS", "JavaScript", "Git", "GitHub"];
+const skillsList = document.getElementById("skillsList");
 
-    for (let i = 0; i < skills.length; i++) {
-      const li = document.createElement("li");
-      li.textContent = skills[i];
-      skillsList.appendChild(li);
+for (let i = 0; i < skills.length; i++) {
+  const li = document.createElement("li");
+  li.textContent = skills[i];
+  skillsList.appendChild(li);
+}
+
+/* ---------------- Notice after delay ---------------- */
+setTimeout(function () {
+  const notice = document.createElement("p");
+  notice.textContent = "New update: Check out my latest projects below!";
+  notice.style.padding = "10px";
+  notice.style.border = "2px solid #333";
+  notice.style.borderRadius = "6px";
+  notice.style.backgroundColor = "#fff7cc";
+  document.body.insertBefore(notice, document.body.children[3]);
+}, 2000);
+
+/* ---------------- Featured boxes ---------------- */
+const uniDiv = document.getElementById("universityResources");
+const personalDiv = document.getElementById("personalProjects");
+
+function showDiv(div) {
+  div.classList.add("visible-box");
+  div.classList.remove("hidden-box");
+}
+
+function hideDiv(div) {
+  div.classList.add("hidden-box");
+  div.classList.remove("visible-box");
+}
+
+function updateFeaturedBoxes(projectCount) {
+  if (projectCount < 3) {
+    showDiv(uniDiv);
+    showDiv(personalDiv);
+  } else {
+    hideDiv(uniDiv);
+    showDiv(personalDiv);
+  }
+}
+
+/* ---------------- Dark Mode ---------------- */
+const darkModeToggle = document.getElementById("darkModeToggle");
+
+function applySavedDarkMode() {
+  const saved = localStorage.getItem("darkMode");
+  if (saved === "enabled") {
+    document.body.classList.add("dark-mode");
+    darkModeToggle.checked = true;
+  } else {
+    document.body.classList.remove("dark-mode");
+    darkModeToggle.checked = false;
+  }
+}
+
+applySavedDarkMode();
+
+darkModeToggle.addEventListener("change", function () {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("darkMode", "enabled");
+  } else {
+    localStorage.setItem("darkMode", "disabled");
+  }
+});
+
+/* ======================================================
+   PROJECT OBJECTS + SESSION STORAGE + DYNAMIC RENDERING
+   ====================================================== */
+
+const defaultProjects = [
+  {
+    title: "Python Course Project",
+    summary: "This repo includes Python practice programs and assignments I completed while learning the basics.",
+    imageUrl: "https://via.placeholder.com/250x150",
+    repoUrl: "https://github.com/Jaden-Cov/PythonCourse"
+  },
+  {
+    title: "SQL Course Project",
+    summary: "This repo contains SQL queries and database work from my database class.",
+    imageUrl: "https://via.placeholder.com/250x150",
+    repoUrl: "https://github.com/Jaden-Cov/sqlcourse"
+  },
+  {
+    title: "GitHub Pages Portfolio",
+    summary: "This is my live portfolio website showing my web development progress.",
+    imageUrl: "https://via.placeholder.com/250x150",
+    repoUrl: "https://github.com/Jaden-Cov/Jaden-Cov.github.io"
+  }
+];
+
+const PROJECTS_KEY = "portfolioProjects";
+
+function getProjectsFromSession() {
+  const stored = sessionStorage.getItem(PROJECTS_KEY);
+
+  if (!stored) {
+    const asString = JSON.stringify(defaultProjects);
+    sessionStorage.setItem(PROJECTS_KEY, asString);
+    return defaultProjects;
+  }
+
+  try {
+    const parsed = JSON.parse(stored);
+    if (Array.isArray(parsed)) {
+      return parsed;
     }
+    sessionStorage.setItem(PROJECTS_KEY, JSON.stringify(defaultProjects));
+    return defaultProjects;
+  } catch (err) {
+    sessionStorage.setItem(PROJECTS_KEY, JSON.stringify(defaultProjects));
+    return defaultProjects;
+  }
+}
 
-    // show a small notice after a delay (kept but made plain)
-    setTimeout(function () {
-      const notice = document.createElement("p");
-      notice.textContent = "New update: Check out my latest projects below!";
-      notice.style.padding = "10px";
-      notice.style.border = "2px solid #333";
-      notice.style.borderRadius = "6px";
-      notice.style.backgroundColor = "#fff7cc";
-      document.body.insertBefore(notice, document.body.children[3]);
-    }, 2000);
+function renderProjects(projectsArray) {
+  const container = document.getElementById("projectsContainer");
+  if (!container) return;
 
-    // featured content visibility (same idea, simpler)
-    const projectLinks = document.querySelectorAll("#projects a");
-    const projectCount = projectLinks.length;
+  container.innerHTML = "";
+  container.style.display = "flex";
+  container.style.flexWrap = "wrap";
+  container.style.gap = "12px";
+  container.style.marginTop = "10px";
 
-    const uniDiv = document.getElementById("universityResources");
-    const personalDiv = document.getElementById("personalProjects");
+  for (let i = 0; i < projectsArray.length; i++) {
+    const proj = projectsArray[i];
 
-    function showDiv(div) {
-      div.classList.add("visible-box");
-      div.classList.remove("hidden-box");
-    }
+    const card = document.createElement("div");
+    card.style.width = "260px";
+    card.style.border = "2px solid #333";
+    card.style.borderRadius = "6px";
+    card.style.padding = "10px";
 
-    function hideDiv(div) {
-      div.classList.add("hidden-box");
-      div.classList.remove("visible-box");
-    }
+    const img = document.createElement("img");
+    img.src = proj.imageUrl;
+    img.alt = proj.title;
+    img.width = 250;
+    img.style.display = "block";
+    img.style.marginBottom = "8px";
 
-    if (projectCount < 3) {
-      showDiv(uniDiv);
-      showDiv(personalDiv);
-    } else {
-      hideDiv(uniDiv);
-      showDiv(personalDiv);
-    }
+    const title = document.createElement("h3");
+    title.textContent = proj.title;
 
-    // dark mode preference
-    const darkModeToggle = document.getElementById("darkModeToggle");
+    const summary = document.createElement("p");
+    summary.textContent = proj.summary;
 
-    function applySavedDarkMode() {
-      const saved = localStorage.getItem("darkMode");
-      if (saved === "enabled") {
-        document.body.classList.add("dark-mode");
-        darkModeToggle.checked = true;
-      } else {
-        document.body.classList.remove("dark-mode");
-        darkModeToggle.checked = false;
-      }
-    }
+    const link = document.createElement("a");
+    link.href = proj.repoUrl;
+    link.target = "_blank";
+    link.textContent = "View Repository";
+    link.style.fontWeight = "bold";
 
-    applySavedDarkMode();
+    card.appendChild(img);
+    card.appendChild(title);
+    card.appendChild(summary);
+    card.appendChild(link);
 
-    darkModeToggle.addEventListener("change", function () {
-      document.body.classList.toggle("dark-mode");
+    container.appendChild(card);
+  }
+}
 
-      if (document.body.classList.contains("dark-mode")) {
-        localStorage.setItem("darkMode", "enabled");
-      } else {
-        localStorage.setItem("darkMode", "disabled");
-      }
-    });
+const projectsData = getProjectsFromSession();
+renderProjects(projectsData);
+updateFeaturedBoxes(projectsData.length);
 
-    // contact form submit message
-    const contactForm = document.getElementById("contactForm");
-    const formStatus = document.getElementById("formStatus");
+/* ---------------- Contact Form ---------------- */
+const contactForm = document.getElementById("contactForm");
+const formStatus = document.getElementById("formStatus");
 
-    contactForm.addEventListener("submit", function (event) {
-      event.preventDefault();
+contactForm.addEventListener("submit", function (event) {
+  event.preventDefault();
 
-      const sender = document.getElementById("senderName").value.trim();
+  const sender = document.getElementById("senderName").value.trim();
 
-      if (sender === "") {
-        alert("Please enter your name before submitting.");
-        return;
-      }
+  if (sender === "") {
+    alert("Please enter your name before submitting.");
+    return;
+  }
 
-      formStatus.textContent = "Sending message...";
-      formStatus.style.fontFamily = "Arial, sans-serif";
-      formStatus.style.fontWeight = "bold";
-      formStatus.style.marginTop = "10px";
+  formStatus.textContent = "Sending message...";
+  formStatus.style.fontWeight = "bold";
+  formStatus.style.marginTop = "10px";
 
-      setTimeout(function () {
-        formStatus.textContent = "Message sent successfully!";
-        contactForm.reset();
-      }, 2500);
-    });
-  </script>
-
+  setTimeout(function () {
+    formStatus.textContent = "Message sent successfully!";
+    contactForm.reset();
+  }, 2500);
+});
+});
+</script>
 </body>
 </html>
